@@ -1,223 +1,153 @@
-# ──────────────────────────────────────────────────────────────────
-# MONITORS
-# ──────────────────────────────────────────────────────────────────
+-- ──────────────────────────────────────────────────────────────────
+-- MONITORS
+-- ──────────────────────────────────────────────────────────────────
+-- monitor = DP-2, 1920x1080@180, 0x0, 1
+hl.monitor({ name = "eDP-1", mode = "1920x1080@144", position = "0x0", scale = 1.2 })
 
-monitor = DP-2, 1920x1080@180, 0x0, 1
+-- ──────────────────────────────────────────────────────────────────
+-- AUTOSTART
+-- ──────────────────────────────────────────────────────────────────
+hl.on("hyprland.start", function ()
+    hl.exec_cmd("dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+    hl.exec_cmd("/usr/libexec/xdg-desktop-portal-hyprland")
+    hl.exec_cmd("/usr/libexec/xdg-desktop-portal")
+    hl.exec_cmd("blueman-applet")
+    hl.exec_cmd("nm-applet --indicator")
+    hl.exec_cmd("qs -c noctalia-shell")
+    hl.exec_cmd("gentoo-pipewire-launcher")
+    hl.exec_cmd("hyprctl setcursor Notwaita-Black 24")
+end)
 
-# ──────────────────────────────────────────────────────────────────
-# AUTOSTART
-# ──────────────────────────────────────────────────────────────────
+-- ──────────────────────────────────────────────────────────────────
+-- ENVIRONMENT VARIABLES
+-- ──────────────────────────────────────────────────────────────────
+hl.env("XCURSOR_SIZE", "24")
+hl.env("XCURSOR_THEME", "default")
+hl.env("QT_QPA_PLATFORM", "wayland")
+hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
+hl.env("GDK_BACKEND", "wayland,x11")
+hl.env("SDL_VIDEODRIVER", "wayland")
+hl.env("CLUTTER_BACKEND", "wayland")
 
-exec-once = dbus-update-activation-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-exec-once = /usr/libexec/xdg-desktop-portal-hyprland
-exec-once = /usr/libexec/xdg-desktop-portal
-exec-once = blueman-applet
-exec-once = nm-applet --indicator
-exec-once = dunst
-exec-once = qs -c noctalia-shell
-exec-once = gentoo-pipewire-launcher
-exec-once = hyprctl setcursor Notwaita-Black 24
+-- ──────────────────────────────────────────────────────────────────
+-- CUSTOMIZATION
+-- ──────────────────────────────────────────────────────────────────
+hl.config({
+    decoration = {
+        rounding = 6,
+        active_opacity = 1.0,
+        inactive_opacity = 0.85,
+        fullscreen_opacity = 1.0,
+        shadow = { enabled = false },
+        blur = {
+            enabled = true,
+            size = 5,
+            passes = 3,
+            new_optimizations = true,
+            xray = false,
+        },
+    },
+})
 
+-- ──────────────────────────────────────────────────────────────────
+-- INPUT
+-- ──────────────────────────────────────────────────────────────────
+hl.config({
+    input = {
+        follow_mouse = 1,
+        sensitivity = 0,
+        accel_profile = "flat",
+        repeat_delay = 360,
+        repeat_rate = 25,
+        touchpad = { natural_scroll = true },
+    },
+})
 
-# ──────────────────────────────────────────────────────────────────
-# ENVIRONMENT VARIABLES
-# ──────────────────────────────────────────────────────────────────
+-- ──────────────────────────────────────────────────────────────────
+-- GENERAL
+-- ──────────────────────────────────────────────────────────────────
+hl.config({
+    general = {
+        gaps_in = 3,
+        gaps_out = 5,
+        border_size = 2,
+        col = {
+            active_border = "rgba(7aa2f7ff)",
+            inactive_border = "rgba(24283bff)",
+        },
+        resize_on_border = true,
+        layout = "master",
+    },
+    dwindle = { pseudotile = false, preserve_split = true },
+    misc = {
+        disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        focus_on_activate = true,
+        animate_manual_resizes = true,
+    },
+})
 
-env = XCURSOR_SIZE,24
-env = XCURSOR_THEME,default
-env = QT_QPA_PLATFORM,wayland
-env = QT_QPA_PLATFORMTHEME,qt6ct
-env = GDK_BACKEND,wayland,x11
-env = SDL_VIDEODRIVER,wayland
-env = CLUTTER_BACKEND,wayland
+-- ──────────────────────────────────────────────────────────────────
+-- ANIMATIONS
+-- ──────────────────────────────────────────────────────────────────
+hl.curve("easeOut", { type = "bezier", points = { {0.0, 0.9}, {0.57, 1.0} } })
+hl.curve("easeIn",  { type = "bezier", points = { {0.4, 0.0}, {1.0, 0.6} } })
+hl.curve("snap",    { type = "bezier", points = { {0.1, 0.9}, {0.2, 1.0} } })
 
+hl.animation({ leaf = "windowsIn",   enabled = true, speed = 4, bezier = "easeOut", style = "popin 80%" })
+hl.animation({ leaf = "windowsOut",  enabled = true, speed = 4, bezier = "easeIn",  style = "popin 80%" })
+hl.animation({ leaf = "windowsMove", enabled = true, speed = 4, bezier = "snap" })
+hl.animation({ leaf = "border",      enabled = true, speed = 3, bezier = "easeOut" })
+hl.animation({ leaf = "workspaces",  enabled = true, speed = 3, bezier = "easeOut", style = "slidevert" })
+hl.animation({ leaf = "fadeIn",      enabled = true, speed = 2, bezier = "easeOut" })
+hl.animation({ leaf = "fadeOut",     enabled = true, speed = 2, bezier = "easeIn" })
+hl.animation({ leaf = "fadeLayers",  enabled = true, speed = 2, bezier = "easeOut" })
 
-# ──────────────────────────────────────────────────────────────────
-# GENERAL
-# ──────────────────────────────────────────────────────────────────
+-- ──────────────────────────────────────────────────────────────────
+-- KEYBINDS
+-- ──────────────────────────────────────────────────────────────────
+local mod = "SUPER"
 
-general {
-    gaps_in          = 3
-    gaps_out         = 5
-    border_size      = 3
-    col.active_border   = rgba(7aa2f7ff)
-    col.inactive_border = rgba(24283bff)
-    resize_on_border = true
-    layout           = master
-}
+-- Apps
+hl.bind("CTRL + ALT + T", hl.dsp.exec_cmd("alacritty"))
+hl.bind(mod .. " + E", hl.dsp.exec_cmd("pcmanfm"))
+hl.bind(mod .. " + R", hl.dsp.exec_cmd("rofi -show drun"))
+hl.bind("Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 
+-- Sound
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%+"))
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-"))
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle"))
 
-# ──────────────────────────────────────────────────────────────────
-# DWINDLE LAYOUT
-# ──────────────────────────────────────────────────────────────────
+-- Brightness
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set +5%"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"))
 
-dwindle {
-    pseudotile     = false
-    preserve_split = true
-}
+-- Session
+hl.bind("ALT + F4", hl.dsp.window.close())
+hl.bind(mod .. " + SHIFT + E", hl.dsp.exit())
+hl.bind(mod .. " + SHIFT + S", hl.dsp.reload())
 
+-- ──────────────────────────────────────────────────────────────────
+-- WINDOW MANAGEMENT
+-- ──────────────────────────────────────────────────────────────────
+hl.bind(mod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mod .. " + down",  hl.dsp.focus({ direction = "down" }))
+hl.bind(mod .. " + up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mod .. " + right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
+hl.bind(mod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "down" }))
+hl.bind(mod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "up" }))
+hl.bind(mod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right" }))
+hl.bind("ALT + Tab", hl.dsp.cyclenext())
+hl.bind(mod .. " + F", hl.dsp.window.fullscreen({ mode = 0 }))
+hl.bind(mod .. " + T", hl.dsp.window.float({ action = "toggle" }))
 
-# ──────────────────────────────────────────────────────────────────
-# INPUT
-# ──────────────────────────────────────────────────────────────────
+for i = 0, 9 do
+    local key = tostring(i)
+    hl.bind(mod .. " + " .. key, hl.dsp.focus({ workspace = i == 0 and 10 or i }))
+    hl.bind(mod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i == 0 and 10 or i }))
+end
 
-input {
-    follow_mouse  = 1
-    sensitivity   = 0
-    accel_profile = flat        # no pointer acceleration
-
-    # xset r rate 360 25  →  repeat_rate = 25 repeats/sec, repeat_delay = 360ms
-    repeat_delay  = 360
-    repeat_rate   = 25
-
-    touchpad {
-        natural_scroll = true
-    }
-}
-
-
-# ──────────────────────────────────────────────────────────────────
-# DECORATION
-# ──────────────────────────────────────────────────────────────────
-
-decoration {
-    rounding          = 6
-
-    active_opacity    = 1.0
-    inactive_opacity  = 0.85
-    fullscreen_opacity = 1.0
-
-    shadow {
-        enabled      = false
-    }
-
-    blur {
-        enabled           = true
-        size              = 5
-        passes            = 3
-        new_optimizations = true
-        xray              = false
-    }
-}
-
-
-# ──────────────────────────────────────────────────────────────────
-# ANIMATIONS
-# ──────────────────────────────────────────────────────────────────
-
-animations {
-    enabled = true
-
-    bezier = easeOut, 0.0, 0.9, 0.57, 1.0
-    bezier = easeIn,  0.4, 0.0, 1.0,  0.6
-    bezier = snap,    0.1, 0.9, 0.2,  1.0
-
-    animation = windowsIn,   1, 4, easeOut, popin 80%
-    animation = windowsOut,  1, 4, easeIn,  popin 80%
-    animation = windowsMove, 1, 2, snap
-    animation = border,      1, 3, easeOut
-    animation = workspaces,  1, 3, easeOut, slidevert
-    animation = fadeIn,      1, 2, easeOut
-    animation = fadeOut,     1, 2, easeIn
-    animation = fadeLayers,  1, 2, easeOut
-}
-
-
-# ──────────────────────────────────────────────────────────────────
-# MISC
-# ──────────────────────────────────────────────────────────────────
-
-misc {
-    disable_hyprland_logo    = true
-    disable_splash_rendering = true
-    focus_on_activate        = true
-    animate_manual_resizes   = true
-}
-
-# ──────────────────────────────────────────────────────────────────
-# WORKSPACES
-# ──────────────────────────────────────────────────────────────────
-
-workspace = 1,
-workspace = 2,
-workspace = 3,
-workspace = 4,
-workspace = 5,
-workspace = 6,
-workspace = 7,
-workspace = 8,
-workspace = 9,
-workspace = 10,
-
-
-# ──────────────────────────────────────────────────────────────────
-# KEYBINDS
-# ──────────────────────────────────────────────────────────────────
-
-$mod = SUPER
-
-# --- Terminal & Apps ---
-bind = CTRL ALT, T,   exec, alacritty
-bind = $mod, E,       exec, pcmanfm
-bind = $mod, R,       exec, rofi -show drun
-bind = , Print,       exec, grim -g "$(slurp)" - | wl-copy
-
-# --- Window focus ---
-bind = $mod, left,  movefocus, l
-bind = $mod, down,  movefocus, d
-bind = $mod, up,    movefocus, u
-bind = $mod, right, movefocus, r
-
-# --- Move windows ---
-bind = $mod SHIFT, left,  movewindow, l
-bind = $mod SHIFT, down,  movewindow, d
-bind = $mod SHIFT, up,    movewindow, u
-bind = $mod SHIFT, right, movewindow, r
-
-# --- Fullscreen / floating ---
-bind = $mod, F, fullscreen, 0
-bind = $mod, T, togglefloating
-
-# --- Close / session ---
-bind = ALT, F4,       killactive
-bind = $mod SHIFT, E, exit
-bind = $mod SHIFT, S, forcerendererreload
-
-# --- Cycle windows ---
-bind = ALT, Tab, cyclenext
-
-# --- Workspaces: focus ---
-bind = $mod, 1, workspace, 1
-bind = $mod, 2, workspace, 2
-bind = $mod, 3, workspace, 3
-bind = $mod, 4, workspace, 4
-bind = $mod, 5, workspace, 5
-bind = $mod, 6, workspace, 6
-bind = $mod, 7, workspace, 7
-bind = $mod, 8, workspace, 8
-bind = $mod, 9, workspace, 9
-bind = $mod, 0, workspace, 10
-
-# --- Workspaces ---
-bind = $mod SHIFT, 1, movetoworkspace, 1
-bind = $mod SHIFT, 2, movetoworkspace, 2
-bind = $mod SHIFT, 3, movetoworkspace, 3
-bind = $mod SHIFT, 4, movetoworkspace, 4
-bind = $mod SHIFT, 5, movetoworkspace, 5
-bind = $mod SHIFT, 6, movetoworkspace, 6
-bind = $mod SHIFT, 7, movetoworkspace, 7
-bind = $mod SHIFT, 8, movetoworkspace, 8
-bind = $mod SHIFT, 9, movetoworkspace, 9
-bind = $mod SHIFT, 0, movetoworkspace, 10
-# --- Other binds lol ---
-bindm = $mod, mouse:272, movewindow
-bindm = $mod, mouse:273, resizewindow
-
-# --- Audio ---
-bind = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+
-bind = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-
-bind = , XF86AudioMute,        exec, wpctl set-mute @DEFAULT_SINK@ toggle
-
-# --- Brightness ---
-bind = , XF86MonBrightnessUp,   exec, brightnessctl set +5%
-bind = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+hl.bindm(mod .. " + mouse:272", hl.dsp.window.drag())
+hl.bindm(mod .. " + mouse:273", hl.dsp.window.resize())
